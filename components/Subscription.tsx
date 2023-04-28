@@ -1,42 +1,82 @@
 import { ISubscription } from '@/interfaces/ISubscription';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import DynamicToggleButtons from './DynamicToggleButtons';
+import { NextPage } from 'next';
+import { IPaypalPlans } from '@/interfaces/IPaypalPlans';
+import PaypalSubscription from './PaypalSubscription';
 import { Button } from 'react-bootstrap';
+import {
+  cancelSubscription,
+  checkForSubscriptions,
+  getUserDetails,
+} from '@/DAL/functions';
+import { ISubscriptionPlanDetails } from '@/interfaces/ISubscriptionPlanDetails';
+import LoadingSpinner from './LoadingSpinner';
+import UnsubscribedPage from './UnsubscribedPage';
+import SubscribedPage from './SubscribedPage';
 
+// The prices for the plans
 export const PRICES = {
-  pro: 9.99,
-  premium: 14.99,
+  pro: 29.0,
+  premium: 15.0,
 };
 
-function Subscription() {
+const Subscription: NextPage<{ paypalPlans: IPaypalPlans }> = ({
+  paypalPlans,
+}) => {
+  // The chosen subscription plan data
   const [subscriptionData, setSubscriptionData] = useState<ISubscription>({});
+  // The final price of the subscription plan
   const [price, setPrice] = useState(0);
+  // Checks if there is a subscription already for the user
+  const [isSubscribed, setIsSubscribed] = useState<boolean>();
+  // The subscription plan details
+  const [subscriptionPlanDetails, setSubscriptionPlanDetails] =
+    useState<ISubscriptionPlanDetails>();
+  // The name of the chosen subscription plan
+  const subscriptionPlan = useRef<TSubscriptionPlan>();
+
+  // Checks if the user is already subscribed and updates the state
+  const checkIfUserSubscribed = async () => {
+    const data = await checkForSubscriptions();
+    if (data) {
+      setIsSubscribed(true);
+    } else {
+      setIsSubscribed(false);
+    }
+  };
+
+  // Only activated when isSubscribed changes
+  const getPlanDetails = useCallback(async () => {
+    const userDetails = await getUserDetails();
+    setSubscriptionPlanDetails({ ...userDetails });
+  }, [isSubscribed]);
+
+  useEffect(() => {
+    checkIfUserSubscribed();
+    getPlanDetails();
+  }, []);
 
   return (
-    <div>
-      <h1>Choose your subscription plan</h1>
-      <DynamicToggleButtons
-        button1Name="Yearly Plan"
-        button2Name="Monthly Plan"
-        type="paymentPlan"
+    <>
+      {(!subscriptionPlanDetails || isSubscribed === undefined) && (
+        <LoadingSpinner />
+      )}
+      <UnsubscribedPage
+        isSubscribed={isSubscribed}
         subscriptionData={subscriptionData}
         setSubscriptionData={setSubscriptionData}
         setPrice={setPrice}
+        subscriptionPlan={subscriptionPlan}
+        paypalPlans={paypalPlans}
+        price={price}
       />
-      <hr />
-      <DynamicToggleButtons
-        button1Name="Pro"
-        button2Name="Premium"
-        type="type"
-        subscriptionData={subscriptionData}
-        setSubscriptionData={setSubscriptionData}
-        setPrice={setPrice}
+      <SubscribedPage
+        subscriptionPlanDetails={subscriptionPlanDetails}
+        cancelSubscription={cancelSubscription}
       />
-      <h3>${price}</h3>
-
-      <Button>Confirm</Button>
-    </div>
+    </>
   );
-}
+};
 
 export default Subscription;

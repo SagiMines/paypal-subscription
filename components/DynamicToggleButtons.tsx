@@ -12,6 +12,7 @@ const DynamicToggleButtons: NextPage<IDynamicToggleButtonsProps> = ({
   subscriptionData,
   setSubscriptionData,
   setPrice,
+  subscriptionPlan,
 }) => {
   // Handles the toggle buttons change, updates the state and calls a function to calculate the final price
   const handleChange = (val: 1 | 2) => {
@@ -28,31 +29,37 @@ const DynamicToggleButtons: NextPage<IDynamicToggleButtonsProps> = ({
     calculateFinalPrice(subscriptionCopy);
   };
 
-  // Calculates the final price of the subscription
+  // Calculates the final price of the subscription and sets the name of the chosen plan
   const calculateFinalPrice = (subscriptionCopy: ISubscription) => {
     if ('paymentPlan' in subscriptionCopy && 'type' in subscriptionCopy) {
       let finalPrice: number;
 
+      // If Pro Annually
       if (subscriptionCopy.paymentPlan === 1 && subscriptionCopy.type === 1) {
-        // 10% discount for a yearly plan
-        finalPrice = PRICES.pro * 12 - PRICES.pro * 12 * 0.1;
-        finalPrice = Number(finalPrice.toFixed(2));
-      } else if (
+        finalPrice = PRICES.pro * 10 - 40;
+        subscriptionPlan.current = 'proAnnually';
+      }
+      // If Premium Annually
+      else if (
         subscriptionCopy.paymentPlan === 1 &&
         subscriptionCopy.type === 2
       ) {
-        // 10% discount for a yearly plan
-        finalPrice = PRICES.premium * 12 - PRICES.premium * 12 * 0.1;
-        finalPrice = Number(finalPrice.toFixed(2));
-      } else if (
+        finalPrice = PRICES.premium * 10;
+        subscriptionPlan.current = 'premiumAnnually';
+      }
+      // If Pro Monthly
+      else if (
         subscriptionCopy.paymentPlan === 2 &&
         subscriptionCopy.type === 1
       ) {
         finalPrice = PRICES.pro;
-      } else {
-        finalPrice = PRICES.premium;
+        subscriptionPlan.current = 'proMonthly';
       }
-      console.log(finalPrice);
+      // If Premium Monthly
+      else {
+        finalPrice = PRICES.premium;
+        subscriptionPlan.current = 'premiumMonthly';
+      }
       setPrice(finalPrice);
     }
   };

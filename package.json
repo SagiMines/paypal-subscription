@@ -9,11 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@paypal/react-paypal-js": "^7.8.3",
+    "@types/crypto-js": "^4.1.1",
     "@types/node": "18.16.0",
     "@types/react": "18.0.38",
     "@types/react-dom": "18.0.11",
     "bootstrap": "^5.2.3",
+    "cookies-next": "^2.1.1",
+    "crypto-js": "^4.1.1",
+    "i": "^0.3.7",
     "next": "13.3.1",
+    "npm": "^9.6.5",
     "react": "18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-dom": "18.2.0",
