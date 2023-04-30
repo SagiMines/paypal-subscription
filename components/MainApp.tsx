@@ -18,9 +18,7 @@ export const PRICES = {
   premium: 15.0,
 };
 
-const Subscription: NextPage<{ paypalPlans: IPaypalPlans }> = ({
-  paypalPlans,
-}) => {
+const MainApp: NextPage<{ paypalPlans: IPaypalPlans }> = ({ paypalPlans }) => {
   // The chosen subscription plan data
   const [subscriptionData, setSubscriptionData] = useState<ISubscription>({});
   // The final price of the subscription plan
@@ -61,26 +59,28 @@ const Subscription: NextPage<{ paypalPlans: IPaypalPlans }> = ({
 
   return (
     <>
-      {((!subscriptionPlanDetails && isSubscribed) ||
-        isSubscribed === undefined) && <LoadingSpinner />}
-      <UnsubscribedPage
-        isSubscribed={isSubscribed}
-        setIsSubscribed={setIsSubscribed}
-        subscriptionData={subscriptionData}
-        setSubscriptionData={setSubscriptionData}
-        setPrice={setPrice}
-        subscriptionPlan={subscriptionPlan}
-        paypalPlans={paypalPlans}
-        price={price}
-      />
-      <SubscribedPage
-        subscriptionPlanDetails={subscriptionPlanDetails}
-        setSubscriptionPlanDetails={setSubscriptionPlanDetails}
-        cancelSubscription={cancelSubscription}
-        setIsSubscribed={setIsSubscribed}
-      />
+      <div className="main-container">
+        {((!subscriptionPlanDetails && isSubscribed) ||
+          isSubscribed === undefined) && <LoadingSpinner />}
+        <UnsubscribedPage
+          isSubscribed={isSubscribed}
+          setIsSubscribed={setIsSubscribed}
+          subscriptionData={subscriptionData}
+          setSubscriptionData={setSubscriptionData}
+          setPrice={setPrice}
+          subscriptionPlan={subscriptionPlan}
+          paypalPlans={paypalPlans}
+          price={price}
+        />
+        <SubscribedPage
+          subscriptionPlanDetails={subscriptionPlanDetails}
+          setSubscriptionPlanDetails={setSubscriptionPlanDetails}
+          cancelSubscription={cancelSubscription}
+          setIsSubscribed={setIsSubscribed}
+        />
+      </div>
     </>
   );
 };
 
-export default Subscription;
+export default MainApp;
