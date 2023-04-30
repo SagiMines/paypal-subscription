@@ -3,17 +3,18 @@ import { ISubscription } from '@/interfaces/ISubscription';
 import { NextPage } from 'next';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
-import { PRICES } from './MainApp';
+import { PRICES } from '@/DAL/functions';
+import { useContext } from 'react';
+import { MainContext } from '@/DAL/mainContext';
 
 const DynamicToggleButtons: NextPage<IDynamicToggleButtonsProps> = ({
   button1Name,
   button2Name,
   type,
-  subscriptionData,
-  setSubscriptionData,
-  setPrice,
-  subscriptionPlan,
 }) => {
+  const { subscriptionData, setSubscriptionData, setPrice, subscriptionPlan } =
+    useContext(MainContext);
+
   // Handles the toggle buttons change, updates the state and calls a function to calculate the final price
   const handleChange = (val: 1 | 2) => {
     let subscriptionCopy = { ...subscriptionData };
