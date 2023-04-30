@@ -1,4 +1,4 @@
-import Subscription from '@/components/Subscription';
+import MainApp from '@/components/MainApp';
 import { IPaypalPlans } from '@/interfaces/IPaypalPlans';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -17,7 +17,7 @@ const Home: NextPage<{ paypalClientId: string; paypalPlans: IPaypalPlans }> = ({
           vault: true,
         }}
       >
-        <Subscription paypalPlans={paypalPlans} />
+        <MainApp paypalPlans={paypalPlans} />
       </PayPalScriptProvider>
     </>
   );

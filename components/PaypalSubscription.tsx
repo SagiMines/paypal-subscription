@@ -8,6 +8,7 @@ import {
 import { NextPage } from 'next';
 import { IPaypalSubscription } from '@/interfaces/IPaypalSubscription';
 import { fetchFromAPI } from '@/DAL/functions';
+import styles from '../styles/PaypalSubscription.module.css';
 
 const PaypalSubscription: NextPage<IPaypalSubscription> = ({
   setIsSubscribed,
@@ -54,6 +55,7 @@ const PaypalSubscription: NextPage<IPaypalSubscription> = ({
   return (
     <>
       <PayPalButtons
+        className={styles.paypalButton}
         fundingSource="paypal"
         createSubscription={createSubscription}
         onApprove={onApprove}

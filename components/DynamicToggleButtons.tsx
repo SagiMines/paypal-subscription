@@ -3,7 +3,7 @@ import { ISubscription } from '@/interfaces/ISubscription';
 import { NextPage } from 'next';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
-import { PRICES } from './Subscription';
+import { PRICES } from './MainApp';
 
 const DynamicToggleButtons: NextPage<IDynamicToggleButtonsProps> = ({
   button1Name,
