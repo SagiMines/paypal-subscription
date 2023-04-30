@@ -2,21 +2,12 @@ import { ISubscription } from '@/interfaces/ISubscription';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { NextPage } from 'next';
 import { IPaypalPlans } from '@/interfaces/IPaypalPlans';
-import {
-  cancelSubscription,
-  checkForSubscriptions,
-  getUserDetails,
-} from '@/DAL/functions';
+import { checkForSubscriptions, getUserDetails } from '@/DAL/functions';
 import { ISubscriptionPlanDetails } from '@/interfaces/ISubscriptionPlanDetails';
 import LoadingSpinner from './LoadingSpinner';
 import UnsubscribedPage from './UnsubscribedPage';
 import SubscribedPage from './SubscribedPage';
-
-// The prices for the plans
-export const PRICES = {
-  pro: 29.0,
-  premium: 15.0,
-};
+import { MainContext } from '@/DAL/mainContext';
 
 const MainApp: NextPage<{ paypalPlans: IPaypalPlans }> = ({ paypalPlans }) => {
   // The chosen subscription plan data
@@ -58,28 +49,27 @@ const MainApp: NextPage<{ paypalPlans: IPaypalPlans }> = ({ paypalPlans }) => {
   }, [isSubscribed]);
 
   return (
-    <>
+    <MainContext.Provider
+      value={{
+        isSubscribed,
+        setIsSubscribed,
+        subscriptionData,
+        setSubscriptionData,
+        price,
+        setPrice,
+        subscriptionPlan,
+        paypalPlans,
+        subscriptionPlanDetails,
+        setSubscriptionPlanDetails,
+      }}
+    >
       <div className="main-container">
         {((!subscriptionPlanDetails && isSubscribed) ||
           isSubscribed === undefined) && <LoadingSpinner />}
-        <UnsubscribedPage
-          isSubscribed={isSubscribed}
-          setIsSubscribed={setIsSubscribed}
-          subscriptionData={subscriptionData}
-          setSubscriptionData={setSubscriptionData}
-          setPrice={setPrice}
-          subscriptionPlan={subscriptionPlan}
-          paypalPlans={paypalPlans}
-          price={price}
-        />
-        <SubscribedPage
-          subscriptionPlanDetails={subscriptionPlanDetails}
-          setSubscriptionPlanDetails={setSubscriptionPlanDetails}
-          cancelSubscription={cancelSubscription}
-          setIsSubscribed={setIsSubscribed}
-        />
+        <UnsubscribedPage />
+        <SubscribedPage />
       </div>
-    </>
+    </MainContext.Provider>
   );
 };
 

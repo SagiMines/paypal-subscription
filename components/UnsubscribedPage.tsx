@@ -1,20 +1,13 @@
 import DynamicToggleButtons from './DynamicToggleButtons';
-import { NextPage } from 'next';
-import { IUnsubscribedPage } from '@/interfaces/IUnsubscribedPage';
 import PaypalSubscription from './PaypalSubscription';
 import { Row } from 'react-bootstrap';
 import styles from '../styles/UnsubscribedPage.module.css';
+import { useContext } from 'react';
+import { MainContext } from '@/DAL/mainContext';
 
-const UnsubscribedPage: NextPage<IUnsubscribedPage> = ({
-  isSubscribed,
-  setIsSubscribed,
-  subscriptionData,
-  setSubscriptionData,
-  setPrice,
-  subscriptionPlan,
-  paypalPlans,
-  price,
-}) => {
+function UnsubscribedPage() {
+  const { isSubscribed, price } = useContext(MainContext);
+
   return (
     <>
       {isSubscribed === false && (
@@ -25,10 +18,6 @@ const UnsubscribedPage: NextPage<IUnsubscribedPage> = ({
               button1Name="Annually Plan"
               button2Name="Monthly Plan"
               type="paymentPlan"
-              subscriptionData={subscriptionData}
-              setSubscriptionData={setSubscriptionData}
-              setPrice={setPrice}
-              subscriptionPlan={subscriptionPlan}
             />
           </Row>
           <Row className={styles.toggleButtonsContainer}>
@@ -36,24 +25,14 @@ const UnsubscribedPage: NextPage<IUnsubscribedPage> = ({
               button1Name="Pro"
               button2Name="Premium"
               type="type"
-              subscriptionData={subscriptionData}
-              setSubscriptionData={setSubscriptionData}
-              setPrice={setPrice}
-              subscriptionPlan={subscriptionPlan}
             />
           </Row>
           <h3 className={styles.finalPrice}>${price}</h3>
 
-          {price !== 0 && (
-            <PaypalSubscription
-              setIsSubscribed={setIsSubscribed}
-              paypalPlans={paypalPlans}
-              subscriptionPlan={subscriptionPlan}
-            />
-          )}
+          {price !== 0 && <PaypalSubscription />}
         </div>
       )}
     </>
   );
-};
+}
 export default UnsubscribedPage;

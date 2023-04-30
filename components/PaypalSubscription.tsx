@@ -1,23 +1,22 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { CreateSubscriptionActions } from '@paypal/paypal-js';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import {
   OnApproveData,
   OnApproveActions,
 } from '@paypal/paypal-js/types/components/buttons';
-import { NextPage } from 'next';
-import { IPaypalSubscription } from '@/interfaces/IPaypalSubscription';
 import { fetchFromAPI } from '@/DAL/functions';
 import styles from '../styles/PaypalSubscription.module.css';
+import { MainContext } from '@/DAL/mainContext';
+import { Row } from 'react-bootstrap';
 
-const PaypalSubscription: NextPage<IPaypalSubscription> = ({
-  setIsSubscribed,
-  paypalPlans,
-  subscriptionPlan,
-}) => {
+function PaypalSubscription() {
+  const { setIsSubscribed, paypalPlans, subscriptionPlan } =
+    useContext(MainContext);
+
   const [errorMessage, setErrorMessage] = useState('');
 
-  const onError = (err: Record<string, unknown>) => {
+  const onError = () => {
     setErrorMessage('An error occoured with your payment');
   };
 
@@ -49,6 +48,9 @@ const PaypalSubscription: NextPage<IPaypalSubscription> = ({
     if (response.status === 201) {
       console.log('Cookie was created');
       setIsSubscribed(true);
+      if (errorMessage) {
+        setErrorMessage('');
+      }
     }
   };
 
@@ -61,8 +63,13 @@ const PaypalSubscription: NextPage<IPaypalSubscription> = ({
         onApprove={onApprove}
         onError={onError}
       />
+      {errorMessage && (
+        <Row>
+          <span className={styles.errorMessage}>{errorMessage}</span>
+        </Row>
+      )}
     </>
   );
-};
+}
 
 export default PaypalSubscription;

@@ -1,14 +1,16 @@
-import { NextPage } from 'next';
-import { ISubscribedPage } from '@/interfaces/ISubscribedPage';
 import { Button } from 'react-bootstrap';
 import styles from '../styles/SubscribedPage.module.css';
+import { cancelSubscription } from '@/DAL/functions';
+import { useContext } from 'react';
+import { MainContext } from '@/DAL/mainContext';
 
-const SubscribedPage: NextPage<ISubscribedPage> = ({
-  subscriptionPlanDetails,
-  setSubscriptionPlanDetails,
-  cancelSubscription,
-  setIsSubscribed,
-}) => {
+function SubscribedPage() {
+  const {
+    subscriptionPlanDetails,
+    setSubscriptionPlanDetails,
+    setIsSubscribed,
+  } = useContext(MainContext);
+
   //Cancles the subscription and updates the state
   const handleClick = async () => {
     await cancelSubscription();
@@ -37,6 +39,6 @@ const SubscribedPage: NextPage<ISubscribedPage> = ({
       )}
     </>
   );
-};
+}
 
 export default SubscribedPage;

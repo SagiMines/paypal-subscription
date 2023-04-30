@@ -1,3 +1,8 @@
 .paypalButton {
   width: 50%;
 }
+
+.errorMessage {
+  color: #de0909;
+  font-size: 20px;
+}

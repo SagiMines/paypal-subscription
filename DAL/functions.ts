@@ -3,6 +3,12 @@ import { getCookie, setCookie } from 'cookies-next';
 import { AES, enc } from 'crypto-js';
 import { NextApiRequest, NextApiResponse } from 'next';
 
+// The prices for the plans
+export const PRICES = {
+  pro: 29.0,
+  premium: 15.0,
+};
+
 // Generic fetch function
 export const fetchFromAPI: TFetchFromAPI = async (route, options?) => {
   const response = await fetch(route, options);
