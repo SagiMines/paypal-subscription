@@ -9,7 +9,6 @@ export default async function handler(
   if (req.method === 'GET') {
     if (hasCookie('plan-id', { req, res })) {
       const planID = decryptCookieData('plan-id', req, res);
-      console.log(planID + ' ddfgdf');
       const response = await fetchFromAPI(
         `https://api-m.sandbox.paypal.com/v1/billing/plans/${planID}`,
         {

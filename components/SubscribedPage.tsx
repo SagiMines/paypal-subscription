@@ -1,15 +1,22 @@
 import { NextPage } from 'next';
-import LoadingSpinner from './LoadingSpinner';
 import { ISubscribedPage } from '@/interfaces/ISubscribedPage';
 import { Button } from 'react-bootstrap';
 
 const SubscribedPage: NextPage<ISubscribedPage> = ({
   subscriptionPlanDetails,
+  setSubscriptionPlanDetails,
   cancelSubscription,
+  setIsSubscribed,
 }) => {
+  //Cancles the subscription and updates the state
+  const handleClick = async () => {
+    await cancelSubscription();
+    setIsSubscribed(false);
+    setSubscriptionPlanDetails(undefined);
+  };
+
   return (
     <>
-      {/* {!subscriptionPlanDetails && <LoadingSpinner />} */}
       {subscriptionPlanDetails && (
         <div>
           <h1>
@@ -18,7 +25,7 @@ const SubscribedPage: NextPage<ISubscribedPage> = ({
           </h1>
           <h3>You are subscribed to {subscriptionPlanDetails.planName}</h3>
           <h3>Your plan's price is: ${subscriptionPlanDetails.planPrice}</h3>
-          <Button onClick={cancelSubscription}>Cancel Subscription</Button>
+          <Button onClick={handleClick}>Cancel Subscription</Button>
         </div>
       )}
     </>

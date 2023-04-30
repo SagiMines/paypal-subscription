@@ -1,10 +1,7 @@
 import { ISubscription } from '@/interfaces/ISubscription';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import DynamicToggleButtons from './DynamicToggleButtons';
 import { NextPage } from 'next';
 import { IPaypalPlans } from '@/interfaces/IPaypalPlans';
-import PaypalSubscription from './PaypalSubscription';
-import { Button } from 'react-bootstrap';
 import {
   cancelSubscription,
   checkForSubscriptions,
@@ -54,16 +51,21 @@ const Subscription: NextPage<{ paypalPlans: IPaypalPlans }> = ({
 
   useEffect(() => {
     checkIfUserSubscribed();
-    getPlanDetails();
   }, []);
+
+  useEffect(() => {
+    if (isSubscribed) {
+      getPlanDetails();
+    }
+  }, [isSubscribed]);
 
   return (
     <>
-      {(!subscriptionPlanDetails || isSubscribed === undefined) && (
-        <LoadingSpinner />
-      )}
+      {((!subscriptionPlanDetails && isSubscribed) ||
+        isSubscribed === undefined) && <LoadingSpinner />}
       <UnsubscribedPage
         isSubscribed={isSubscribed}
+        setIsSubscribed={setIsSubscribed}
         subscriptionData={subscriptionData}
         setSubscriptionData={setSubscriptionData}
         setPrice={setPrice}
@@ -73,7 +75,9 @@ const Subscription: NextPage<{ paypalPlans: IPaypalPlans }> = ({
       />
       <SubscribedPage
         subscriptionPlanDetails={subscriptionPlanDetails}
+        setSubscriptionPlanDetails={setSubscriptionPlanDetails}
         cancelSubscription={cancelSubscription}
+        setIsSubscribed={setIsSubscribed}
       />
     </>
   );
