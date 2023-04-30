@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { CreateSubscriptionActions } from '@paypal/paypal-js';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import {
@@ -7,10 +7,10 @@ import {
 } from '@paypal/paypal-js/types/components/buttons';
 import { NextPage } from 'next';
 import { IPaypalSubscription } from '@/interfaces/IPaypalSubscription';
-import { Button } from 'react-bootstrap';
 import { fetchFromAPI } from '@/DAL/functions';
 
 const PaypalSubscription: NextPage<IPaypalSubscription> = ({
+  setIsSubscribed,
   paypalPlans,
   subscriptionPlan,
 }) => {
@@ -24,10 +24,7 @@ const PaypalSubscription: NextPage<IPaypalSubscription> = ({
     data: Record<string, unknown>,
     actions: CreateSubscriptionActions
   ) => {
-    console.log(paypalPlans);
     console.log('create subscription func!');
-    console.log(data);
-    console.log(actions);
     return actions.subscription.create({
       plan_id: subscriptionPlan.current
         ? paypalPlans[subscriptionPlan.current]
@@ -39,17 +36,18 @@ const PaypalSubscription: NextPage<IPaypalSubscription> = ({
     //call api to store details of transaction
 
     console.log('Paypal approved');
-    console.log(data);
-
     const requestBody = {
       subscriptionID: data.subscriptionID,
+      subscriptionPlan: subscriptionPlan.current,
     };
     const response = await fetchFromAPI('/api/cookies', {
       method: 'POST',
       body: JSON.stringify(requestBody),
     });
+
     if (response.status === 201) {
       console.log('Cookie was created');
+      setIsSubscribed(true);
     }
   };
 

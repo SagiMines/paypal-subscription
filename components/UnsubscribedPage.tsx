@@ -1,13 +1,11 @@
 import DynamicToggleButtons from './DynamicToggleButtons';
-import LoadingSpinner from './LoadingSpinner';
-
 import { NextPage } from 'next';
-
 import { IUnsubscribedPage } from '@/interfaces/IUnsubscribedPage';
 import PaypalSubscription from './PaypalSubscription';
 
 const UnsubscribedPage: NextPage<IUnsubscribedPage> = ({
   isSubscribed,
+  setIsSubscribed,
   subscriptionData,
   setSubscriptionData,
   setPrice,
@@ -17,7 +15,6 @@ const UnsubscribedPage: NextPage<IUnsubscribedPage> = ({
 }) => {
   return (
     <>
-      {/* {isSubscribed === undefined && <LoadingSpinner />} */}
       {isSubscribed === false && (
         <div>
           <h1>Choose your subscription plan</h1>
@@ -44,6 +41,7 @@ const UnsubscribedPage: NextPage<IUnsubscribedPage> = ({
 
           {price !== 0 && (
             <PaypalSubscription
+              setIsSubscribed={setIsSubscribed}
               paypalPlans={paypalPlans}
               subscriptionPlan={subscriptionPlan}
             />
