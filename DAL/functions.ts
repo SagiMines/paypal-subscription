@@ -31,7 +31,7 @@ export const checkForSubscriptions = async () => {
 export const cancelSubscription = async () => {
   const subscriptionCookie = await checkForSubscriptions();
   if (subscriptionCookie) {
-    const response = await fetchFromAPI('/api/paypal/subscriptions/cancel', {
+    const response = await fetchFromAPI('/api/paypal/subscription/cancel', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -44,7 +44,6 @@ export const cancelSubscription = async () => {
       console.log('Error');
     }
   }
-  //Maybe add error when there is nothing to cancel
 };
 
 // Returns the JSON body from a generic GET request
@@ -101,13 +100,37 @@ export const decryptCookieData = (
 
 // Returns the subscription details of the user
 export const getUserDetails = async () => {
-  const subscriptionDetails = await getApiDetails('/api/paypal/subscriptions');
-  const planDetails = await getApiDetails('/api/paypal/plans');
+  const subscriptionDetails = await getApiDetails('/api/paypal/subscription');
+  const planDetails = await getApiDetails('/api/paypal/plan');
   const userDetails: ISubscriptionPlanDetails = {
     userFirstName: subscriptionDetails.subscriber.name['given_name'],
     userLastName: subscriptionDetails.subscriber.name.surname,
     planName: planDetails.name,
-    planPrice: subscriptionDetails['billing_info']['last_payment'].amount.value,
+    planPrice:
+      planDetails['billing_cycles'][0]['pricing_scheme']['fixed_price'].value,
   };
   return userDetails;
+};
+
+// Array of the subscriptions plan names
+export const getSubscriptionPlansNames = [
+  'Premium Monthly',
+  'Pro Monthly',
+  'Premium Annually',
+  'Pro Annually',
+];
+
+// Camelize (camel case) any given string
+export const camelize = (str: string) => {
+  return str
+    .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
+      return index === 0 ? word.toLowerCase() : word.toUpperCase();
+    })
+    .replace(/\s+/g, '');
+};
+
+// Update the plan's name from the old one
+export const changePlan = (product: string): 'Monthly' | 'Annually' => {
+  if (product === 'Annually') return 'Monthly';
+  return 'Annually';
 };
