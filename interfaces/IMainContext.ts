@@ -16,4 +16,5 @@ export interface IMainContext {
   setSubscriptionPlanDetails: Dispatch<
     SetStateAction<ISubscriptionPlanDetails | undefined>
   >;
+  setIsSubscriptionPlanChanged: Dispatch<SetStateAction<boolean>>;
 }

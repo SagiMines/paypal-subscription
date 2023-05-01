@@ -5,14 +5,23 @@ import {
   OnApproveData,
   OnApproveActions,
 } from '@paypal/paypal-js/types/components/buttons';
-import { fetchFromAPI } from '@/DAL/functions';
+import { camelize, changePlan, fetchFromAPI } from '@/DAL/functions';
 import styles from '../styles/PaypalSubscription.module.css';
 import { MainContext } from '@/DAL/mainContext';
 import { Row } from 'react-bootstrap';
+import { NextPage } from 'next';
 
-function PaypalSubscription() {
-  const { setIsSubscribed, paypalPlans, subscriptionPlan } =
-    useContext(MainContext);
+const PaypalSubscription: NextPage<{
+  action?: string;
+  closeModal?: () => void;
+}> = ({ action, closeModal }) => {
+  const {
+    setIsSubscribed,
+    paypalPlans,
+    subscriptionPlan,
+    subscriptionPlanDetails,
+    setIsSubscriptionPlanChanged,
+  } = useContext(MainContext);
 
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -20,11 +29,31 @@ function PaypalSubscription() {
     setErrorMessage('An error occoured with your payment');
   };
 
-  const createSubscription = (
+  const createSubscription = async (
     data: Record<string, unknown>,
     actions: CreateSubscriptionActions
   ) => {
     console.log('create subscription func!');
+    if (action === 'change') {
+      const planName = subscriptionPlanDetails?.planName;
+      if (planName) {
+        const planProduct = planName.split(' ')[0];
+        const planSubscription = changePlan(planName.split(' ')[1]);
+        const plan = planProduct.concat(' ', planSubscription);
+        const camelizedNewPlan = camelize(plan);
+        const subscriptionIDResponse = await fetchFromAPI('/api/cookies');
+        const subscriptionIDData = await subscriptionIDResponse.json();
+        return actions.subscription.revise(subscriptionIDData.subscriptionID, {
+          plan_id:
+            camelizedNewPlan === 'premiumMonthly' ||
+            camelizedNewPlan === 'premiumAnnually' ||
+            camelizedNewPlan === 'proMonthly' ||
+            camelizedNewPlan === 'proAnnually'
+              ? paypalPlans[camelizedNewPlan]
+              : '',
+        });
+      }
+    }
     return actions.subscription.create({
       plan_id: subscriptionPlan.current
         ? paypalPlans[subscriptionPlan.current]
@@ -51,6 +80,12 @@ function PaypalSubscription() {
       if (errorMessage) {
         setErrorMessage('');
       }
+      if (action === 'change') {
+        if (closeModal) {
+          closeModal();
+        }
+        setIsSubscriptionPlanChanged(true);
+      }
     }
   };
 
@@ -70,6 +105,6 @@ function PaypalSubscription() {
       )}
     </>
   );
-}
+};
 
 export default PaypalSubscription;

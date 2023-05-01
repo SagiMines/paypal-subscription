@@ -19,6 +19,9 @@ const MainApp: NextPage<{ paypalPlans: IPaypalPlans }> = ({ paypalPlans }) => {
   // The subscription plan details
   const [subscriptionPlanDetails, setSubscriptionPlanDetails] =
     useState<ISubscriptionPlanDetails>();
+  // The value sets to true everytime the subscription plan changes
+  const [isSubscriptionPlanChanged, setIsSubscriptionPlanChanged] =
+    useState(false);
   // The name of the chosen subscription plan
   const subscriptionPlan = useRef<TSubscriptionPlan>();
 
@@ -32,21 +35,22 @@ const MainApp: NextPage<{ paypalPlans: IPaypalPlans }> = ({ paypalPlans }) => {
     }
   };
 
-  // Only activated when isSubscribed changes
+  // Only activated when isSubscribed/isSubscriptionPlanChanged changes
   const getPlanDetails = useCallback(async () => {
     const userDetails = await getUserDetails();
     setSubscriptionPlanDetails({ ...userDetails });
-  }, [isSubscribed]);
+    setIsSubscriptionPlanChanged(false);
+  }, [isSubscribed, isSubscriptionPlanChanged]);
 
   useEffect(() => {
     checkIfUserSubscribed();
   }, []);
 
   useEffect(() => {
-    if (isSubscribed) {
+    if (isSubscribed || isSubscriptionPlanChanged) {
       getPlanDetails();
     }
-  }, [isSubscribed]);
+  }, [isSubscribed, isSubscriptionPlanChanged]);
 
   return (
     <MainContext.Provider
@@ -61,6 +65,7 @@ const MainApp: NextPage<{ paypalPlans: IPaypalPlans }> = ({ paypalPlans }) => {
         paypalPlans,
         subscriptionPlanDetails,
         setSubscriptionPlanDetails,
+        setIsSubscriptionPlanChanged,
       }}
     >
       <div className="main-container">
