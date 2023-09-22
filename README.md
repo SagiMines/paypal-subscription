@@ -77,7 +77,7 @@ To run this project, you will need to add an `.env.local` file to the root of th
 **PayPal API:**
 
 `DB_PAYPAL_CLIENT_ID` - Your PayPal developer client ID.  
-`DB_PAYPAL_SECRET` - Your PayPal developer secret.
+`DB_PAYPAL_SECRET` - Your PayPal developer secret.  
 `DB_PAYPAL_PREMIUM_MONTHLY_PLAN_ID` - Your PayPal developer premium monthly subscription plan ID.  
 `DB_PAYPAL_PREMIUM_ANNUALLY_PLAN_ID` - Your PayPal developer premium annually subscription plan ID.  
 `DB_PAYPAL_PRO_ANNUALLY_PLAN_ID` - Your PayPal developer pro annually subscription plan ID.  
